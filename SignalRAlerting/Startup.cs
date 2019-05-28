@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SignalRAlerting.Hubs;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace SignalRAlerting
 {
@@ -27,6 +28,8 @@ namespace SignalRAlerting
         {
             services.AddSignalR();
             services.AddCors();
+
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "SignalR Test" }));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -49,7 +52,11 @@ namespace SignalRAlerting
                 options.MapHub<ActionHub>("/hubs/actions");
             });
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SignalR Alerting"));
+
             app.UseHttpsRedirection();
+
             app.UseMvc();
         }
     }
