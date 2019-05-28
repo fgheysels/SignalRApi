@@ -24,14 +24,14 @@ namespace SignalRAlerting.Controllers
         }
 
         [HttpPost("launch")]
-        public ActionResult<IEnumerable<string>> Launch(string action)
+        public ActionResult<IEnumerable<string>> Launch(string connectionId, string action)
         {
             return Accepted(new
             {
-                //ConnectionId = _signalRHub.
+                ConnectionId = connectionId
             });
         }
-        
+
         [HttpPost("respond")]
         public async Task<ActionResult> Respond([FromBody] ActionResponse response)
         {

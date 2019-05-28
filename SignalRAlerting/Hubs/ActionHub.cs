@@ -22,5 +22,10 @@ namespace SignalRAlerting.Hubs
         {
             await Clients.All.Alert(message);
         }
+
+        public async Task<string> GetConnectionId()
+        {
+            return await Task.FromResult(Context.ConnectionId);
+        }
     }
 }
