@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -13,14 +12,14 @@ namespace SignalRAlerting.Controllers
     [ApiController]
     public class ActionController : ControllerBase
     {
-        private readonly IHubContext<ActionHub, IActionClient> _signalRHub;
+        private readonly IHubContext<ActionHub, IActionClient> _hub;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActionController"/> class.
         /// </summary>
         public ActionController(IHubContext<ActionHub, IActionClient> hub)
         {
-            _signalRHub = hub;
+            _hub = hub;
         }
 
         [HttpPost("launch")]
@@ -42,11 +41,11 @@ namespace SignalRAlerting.Controllers
 
             if (String.IsNullOrWhiteSpace(response.ClientId))
             {
-                await _signalRHub.Clients.All.Alert(response.Message);
+                await _hub.Clients.All.Alert(response.Message);
             }
             else
             {
-                await _signalRHub.Clients.Clients(response.ClientId).Alert(response.Message);
+                await _hub.Clients.Clients(response.ClientId).Alert(response.Message);
             }
 
             return Ok();

@@ -11,26 +11,26 @@ namespace SignalRTestClient
     {
         private const string ActionHubUrl = "http://localhost:3132/hubs/actions"; // This is the URL that is registered on the API.
 
-        private static HubConnection connection;
+        private static HubConnection _connection;
 
         static async Task Main(string[] args)
         {
             Console.WriteLine("SignalR Test-Client");
             Console.WriteLine("Connecting to SignalR Hub ...");
 
-            connection = new HubConnectionBuilder().WithUrl(ActionHubUrl).Build();
+            _connection = new HubConnectionBuilder().WithUrl(ActionHubUrl).Build();
 
-            connection.Closed += async (exception) =>
+            _connection.Closed += async (exception) =>
             {
                 Console.WriteLine("Connection was closed, trying to reconnect.");
                 await Task.Delay(TimeSpan.FromMilliseconds(50));
-                await connection.StartAsync();
+                await _connection.StartAsync();
                 Console.WriteLine("Reconnected");
             };
 
-            connection.On<string>("Alert", (m) => Console.WriteLine(m));
+            _connection.On<string>("Alert", (m) => Console.WriteLine(m));
 
-            await connection.StartAsync();
+            await _connection.StartAsync();
 
             Console.WriteLine("Connected!");
             Console.WriteLine("Press q to quit, m to invoke an action");
@@ -62,7 +62,7 @@ namespace SignalRTestClient
             // When we have authenticated users/clients, we can use the OnConnected method of the Hub and register
             // a mapping connectionId <> userId.  On the server-side, we could then use the userId to retrieve the 
             // connectionId from the Hub.
-            var connectionId = await connection.InvokeAsync<string>("GetConnectionId");
+            var connectionId = await _connection.InvokeAsync<string>("GetConnectionId");
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:3132/api/action/launch?connectionId={connectionId}&action=test");
 
@@ -79,8 +79,6 @@ namespace SignalRTestClient
             {
                 Console.WriteLine("Response from server: " + response.StatusCode);
             }
-
-
         }
 
     }
