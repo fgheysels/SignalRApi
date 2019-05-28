@@ -28,7 +28,7 @@ namespace SignalRAlerting.Controllers
         {
             return Accepted(new
             {
-                //ConnectionId = HttpContext.
+                //ConnectionId = _signalRHub.
             });
         }
         
