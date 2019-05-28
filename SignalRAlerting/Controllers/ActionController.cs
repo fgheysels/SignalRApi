@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SignalRAlerting.Hubs;
+using SignalRAlerting.Models;
 
 namespace SignalRAlerting.Controllers
 {
@@ -12,17 +13,16 @@ namespace SignalRAlerting.Controllers
     [ApiController]
     public class ActionController : ControllerBase
     {
-        private readonly IHubContext<ActionHub> _signalRHub;
+        private readonly IHubContext<ActionHub, IActionClient> _signalRHub;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActionController"/> class.
         /// </summary>
-        public ActionController(IHubContext<ActionHub> hub)
+        public ActionController(IHubContext<ActionHub, IActionClient> hub)
         {
             _signalRHub = hub;
         }
 
-        // GET api/values
         [HttpPost("launch")]
         public ActionResult<IEnumerable<string>> Launch(string action)
         {
@@ -31,30 +31,25 @@ namespace SignalRAlerting.Controllers
                 //ConnectionId = HttpContext.
             });
         }
-
-        // GET api/values/5
+        
         [HttpPost("respond")]
-        public ActionResult<string> Get(string response)
+        public async Task<ActionResult> Respond([FromBody] ActionResponse response)
         {
+            if (response == null)
+            {
+                return BadRequest();
+            }
+
+            if (String.IsNullOrWhiteSpace(response.ClientId))
+            {
+                await _signalRHub.Clients.All.Alert(response.Message);
+            }
+            else
+            {
+                await _signalRHub.Clients.Clients(response.ClientId).Alert(response.Message);
+            }
+
             return Ok();
         }
-
-        //// POST api/values
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-
-        //// PUT api/values/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-
-        //// DELETE api/values/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
     }
 }

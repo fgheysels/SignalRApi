@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SignalRAlerting.Hubs;
 
 namespace SignalRAlerting
 {
@@ -43,9 +44,9 @@ namespace SignalRAlerting
             }
 
             app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-            app.UseSignalR((options) =>
+            app.UseSignalR(options =>
             {
-
+                options.MapHub<ActionHub>("/hubs/actions");
             });
 
             app.UseHttpsRedirection();

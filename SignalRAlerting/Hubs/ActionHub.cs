@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace SignalRAlerting.Hubs
 {
-    public interface IActionHub
+    public interface IActionClient
     {
         Task Alert(string message);
     }
 
-    public class ActionHub : Hub<IActionHub>
+    public class ActionHub : Hub<IActionClient>
     {
         public async Task Alert(string connectionId, string message)
         {
