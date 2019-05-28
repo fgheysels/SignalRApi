@@ -24,6 +24,9 @@ namespace SignalRAlerting
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
+            services.AddCors();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -34,7 +37,18 @@ namespace SignalRAlerting
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseHsts();
+            }
 
+            app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+            app.UseSignalR((options) =>
+            {
+
+            });
+
+            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
